@@ -1,0 +1,23 @@
+{
+  "name": "nhulsch/slim-redis-rlimit",
+  "version": "0.1",
+  "description": "Slim Middleware for having Rate Limits with Redis",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nils Hulsch",
+      "email": "nils.hulsch@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Slim\\Middleware\\": "src"
+    }
+  },
+  "require": {
+    "php": ">=5.5",
+    "psr/http-message": ">=1.0",
+    "cheprasov/php-redis-client": "^1.3"
+  }
+}
