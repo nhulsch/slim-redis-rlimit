@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Memcache Ratelimiting for Slim 3.x Framework
+ * Redis Ratelimiting for Slim 3.x Framework
  *
  * Copyright (c) 2016 Nils Hulsch
  *
@@ -27,8 +27,9 @@ class RedisRatelimit
 
     private $maxRequests;
     private $expire;
+    private $clientIdentifier;
 
-    public function __construct($host = 'tcp://127.0.0.1:6379', $maxRequests = 100, $expire = 300)
+    public function __construct($host = 'tcp://127.0.0.1:6379', $maxRequests = 100, $expire = 300, $clientIdentifier = false)
     {
         $this->redis = new RedisClient([
             'server' => $host,
@@ -37,14 +38,19 @@ class RedisRatelimit
 
         $this->maxRequests = $maxRequests;
         $this->expire = $expire;
+        $this->clientIdentifier = $clientIdentifier;
     }
 
     public function __invoke(RequestInterface $requestInterface, ResponseInterface $responseInterface, $next)
     {
-        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-            $reformattedSource = preg_replace("/[.:]/", "_", $_SERVER['HTTP_CF_CONNECTING_IP']);
+        if (!$this->clientIdentifier) {
+            if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+                $reformattedSource = preg_replace("/[.:]/", "_", $_SERVER['HTTP_CF_CONNECTING_IP']);
+            } else {
+                $reformattedSource = preg_replace("/[.:]/", "_", $_SERVER['REMOTE_ADDR']);
+            }
         } else {
-            $reformattedSource = preg_replace("/[.:]/", "_", $_SERVER['REMOTE_ADDR']);
+            $reformattedSource = $this->clientIdentifier;
         }
 
         $requestCount = count($this->redis->keys(sprintf("rl.%s.*", $reformattedSource)));

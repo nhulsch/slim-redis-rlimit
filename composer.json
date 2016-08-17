@@ -1,6 +1,6 @@
 {
   "name": "nhulsch/slim-redis-rlimit",
-  "version": "0.1",
+  "version": "0.2",
   "description": "Slim Middleware for having Rate Limits with Redis",
   "minimum-stability": "stable",
   "license": "MIT",
